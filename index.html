@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Techbuck Biomed - Equipment Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <img src="images/logo.png" alt="MEDITRACK" height="40">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link active" href="#dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#equipment"><i class="fas fa-x-ray"></i> Equipment</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#maintenance"><i class="fas fa-tools"></i> Maintenance</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#inventory"><i class="fas fa-boxes"></i> Inventory</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#reports"><i class="fas fa-chart-bar"></i> Reports</a></li>
+                </ul>
+                <!-- Update the dropdown menu in the navbar -->
+         <div class="container mt-5 text-end">
+  <div class="dropdown">
+    <button class="btn btn-outline-light dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown">
+      <i class="fas fa-user-circle"></i> User
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end">
+      <li><a class="dropdown-item" href="#" id="profileBtn"><i class="fas fa-user me-2"></i> Profile</a></li>
+      <li><a class="dropdown-item" href="#" id="settingsBtn"><i class="fas fa-cog me-2"></i> Settings</a></li>
+      <li><hr class="dropdown-divider"></li>
+      <li><a class="dropdown-item text-danger" href="#" id="logoutBtn"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
+    </ul>
+  </div>
+</div>        
+<div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content text-dark">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="profileModalLabel"><i class="fas fa-user me-2"></i>User Profile</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="text-center mb-4">
+          <img src="images/default-user.png" class="rounded-circle" width="100" height="100" alt="User Profile">
+          <h4 class="mt-3" id="userName">John Doe</h4>
+          <p class="text-muted" id="userRole">Biomedical Engineer</p>
+        </div>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Email</label>
+            <p class="form-control-static" id="userEmail">john.doe@example.com</p>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Phone</label>
+            <p class="form-control-static" id="userPhone">+1 (555) 123-4567</p>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Department</label>
+          <p class="form-control-static" id="userDepartment">Biomedical Equipment Services</p>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Last Login</label>
+          <p class="form-control-static" id="userLastLogin">Today at 09:45 AM</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Settings Modal -->
+<div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content text-dark">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="settingsModalLabel"><i class="fas fa-cog me-2"></i>User Settings</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="settingsForm">
+          <div class="mb-3">
+            <label for="notificationPref" class="form-label">Notification Preferences</label>
+            <select class="form-select" id="notificationPref">
+              <option value="all">All Notifications</option>
+              <option value="important">Important Only</option>
+              <option value="none">None</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="themePref" class="form-label">Theme</label>
+            <select class="form-select" id="themePref">
+              <option value="light">Light</option>
+              <option value="dark">Dark</option>
+              <option value="system">System Default</option>
+            </select>
+          </div>
+          <div class="form-check form-switch mb-3">
+            <input class="form-check-input" type="checkbox" id="emailNotifications" checked>
+            <label class="form-check-label" for="emailNotifications">Email Notifications</label>
+          </div>
+          <div class="form-check form-switch mb-3">
+            <input class="form-check-input" type="checkbox" id="smsNotifications">
+            <label class="form-check-label" for="smsNotifications">SMS Notifications</label>
+          </div>
+          <div class="mb-3">
+            <label for="timezonePref" class="form-label">Timezone</label>
+            <select class="form-select" id="timezonePref">
+              <option value="EST">Eastern Time (EST)</option>
+              <option value="CST">Central Time (CST)</option>
+              <option value="PST">Pacific Time (PST)</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-success" id="saveSettingsBtn">Save Settings</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Logout Confirmation Modal -->
+<div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content text-dark">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title" id="logoutModalLabel"><i class="fas fa-sign-out-alt me-2"></i>Confirm Logout</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to log out?</p>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="rememberLogout">
+          <label class="form-check-label" for="rememberLogout">Remember my choice</label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn btn-danger" id="confirmLogoutBtn">Logout</button>
+      </div>
+    </div>
+  </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container-fluid mt-4">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-lg-2 d-none d-lg-block sidebar">
+                <div class="list-group list-group-flush">
+                    <a href="#dashboard" class="list-group-item list-group-item-action active">
+                        <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                    </a>
+                    <a href="#equipment" class="list-group-item list-group-item-action">
+                        <i class="fas fa-x-ray me-2"></i>Equipment
+                    </a>
+                    <a href="#maintenance" class="list-group-item list-group-item-action">
+                        <i class="fas fa-tools me-2"></i>Maintenance
+                    </a>
+                    <a href="#inventory" class="list-group-item list-group-item-action">
+                        <i class="fas fa-boxes me-2"></i>Inventory
+                    </a>
+                    <a href="#reports" class="list-group-item list-group-item-action">
+                        <i class="fas fa-chart-bar me-2"></i>Reports
+                    </a>
+                    <a href="#training" class="list-group-item list-group-item-action">
+                        <i class="fas fa-graduation-cap me-2"></i>Training
+                    </a>
+                    <a href="#alerts" class="list-group-item list-group-item-action">
+                        <i class="fas fa-bell me-2"></i>Alerts
+                    </a>
+                </div>
+            </div>
+
+            <!-- Main Content Area -->
+            <div class="col-lg-10 main-content">
+                <!-- Dashboard Section -->
+                <section id="dashboard" class="content-section">
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h2><i class="fas fa-tachometer-alt me-2"></i>Dashboard</h2>
+                            <hr>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <!-- Status Cards -->
+                        <div class="col-md-3 mb-4">
+                            <div class="card text-white bg-primary">
+                                <div class="card-body">
+                                    <h5 class="card-title">Total Equipment</h5>
+                                    <h2 class="card-text" id="totalEquipment">0</h2>
+                                    <i class="fas fa-x-ray fa-3x float-end"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-4">
+                            <div class="card text-white bg-success">
+                                <div class="card-body">
+                                    <h5 class="card-title">Active Equipment</h5>
+                                    <h2 class="card-text" id="activeEquipment">0</h2>
+                                    <i class="fas fa-check-circle fa-3x float-end"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-4">
+                            <div class="card text-white bg-warning">
+                                <div class="card-body">
+                                    <h5 class="card-title">Pending Maintenance</h5>
+                                    <h2 class="card-text" id="pendingMaintenance">0</h2>
+                                    <i class="fas fa-tools fa-3x float-end"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-4">
+                            <div class="card text-white bg-danger">
+                                <div class="card-body">
+                                    <h5 class="card-title">Critical Alerts</h5>
+                                    <h2 class="card-text" id="criticalAlerts">0</h2>
+                                    <i class="fas fa-exclamation-triangle fa-3x float-end"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activities -->
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <div class="card">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0"><i class="fas fa-history me-2"></i>Recent Activities</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="activity-feed" id="recentActivities">
+                                        <!-- Activities will be loaded here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Upcoming Maintenance -->
+                        <div class="col-md-6 mb-4">
+                            <div class="card">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0"><i class="fas fa-calendar-alt me-2"></i>Upcoming Maintenance</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="upcoming-maintenance" id="upcomingMaintenance">
+                                        <!-- Maintenance schedule will be loaded here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Equipment Management Section -->
+                <section id="equipment" class="content-section d-none">
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h2><i class="fas fa-x-ray me-2"></i>Equipment Management</h2>
+                            <hr>
+                        </div>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addEquipmentModal">
+                                <i class="fas fa-plus me-2"></i>Add New Equipment
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0"><i class="fas fa-list me-2"></i>Equipment List</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-hover" id="equipmentTable">
+                                            <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Name</th>
+                                                    <th>Model</th>
+                                                    <th>Serial No.</th>
+                                                    <th>Manufacturer</th>
+                                                    <th>Location</th>
+                                                    <th>Status</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!-- Equipment data will be loaded here -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Maintenance Section -->
+                <section id="maintenance" class="content-section d-none">
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h2><i class="fas fa-tools me-2"></i>Maintenance Management</h2>
+                            <hr>
+                        </div>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-outline-primary active" id="showAllMaintenance">All</button>
+                                <button type="button" class="btn btn-outline-primary" id="showPreventive">Preventive</button>
+                                <button type="button" class="btn btn-outline-primary" id="showCorrective">Corrective</button>
+                                <button type="button" class="btn btn-outline-primary" id="showCalibration">Calibration</button>
+                            </div>
+                            <button class="btn btn-primary float-end" data-bs-toggle="modal" data-bs-target="#addMaintenanceModal">
+                                <i class="fas fa-plus me-2"></i>Schedule Maintenance
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0"><i class="fas fa-list me-2"></i>Maintenance Records</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-hover" id="maintenanceTable">
+                                            <thead>
+                                                <tr>
+                                                    <th>Ticket ID</th>
+                                                    <th>Equipment</th>
+                                                    <th>Type</th>
+                                                    <th>Scheduled Date</th>
+                                                    <th>Status</th>
+                                                    <th>Assigned To</th>
+                                                    <th>Priority</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!-- Maintenance data will be loaded here -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Inventory Section -->
+                <section id="inventory" class="content-section d-none">
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h2><i class="fas fa-boxes me-2"></i>Inventory Management</h2>
+                            <hr>
+                        </div>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-outline-primary active" id="showAllInventory">All</button>
+                                <button type="button" class="btn btn-outline-primary" id="showFastMoving">Fast Moving</button>
+                                <button type="button" class="btn btn-outline-primary" id="showSlowMoving">Slow Moving</button>
+                                <button type="button" class="btn btn-outline-primary" id="showLowStock">Low Stock</button>
+                            </div>
+                            <button class="btn btn-primary float-end" data-bs-toggle="modal" data-bs-target="#addInventoryModal">
+                                <i class="fas fa-plus me-2"></i>Add Inventory Item
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0"><i class="fas fa-list me-2"></i>Inventory Items</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-hover" id="inventoryTable">
+                                            <thead>
+                                                <tr>
+                                                    <th>Part No.</th>
+                                                    <th>Description</th>
+                                                    <th>Equipment</th>
+                                                    <th>Category</th>
+                                                    <th>Quantity</th>
+                                                    <th>Min. Level</th>
+                                                    <th>Status</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!-- Inventory data will be loaded here -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Reports Section -->
+                <section id="reports" class="content-section d-none">
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h2><i class="fas fa-chart-bar me-2"></i>Reports & Analytics</h2>
+                            <hr>
+                        </div>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Equipment Status</h5>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="equipmentStatusChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Maintenance Trends</h5>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="maintenanceTrendsChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0"><i class="fas fa-table me-2"></i>Generate Custom Report</h5>
+                                </div>
+                                <div class="card-body">
+                                    <form id="reportForm">
+                                        <div class="row mb-3">
+                                            <div class="col-md-4">
+                                                <label for="reportType" class="form-label">Report Type</label>
+                                                <select class="form-select" id="reportType">
+                                                    <option value="maintenance">Maintenance Report</option>
+                                                    <option value="inventory">Inventory Report</option>
+                                                    <option value="equipment">Equipment Report</option>
+                                                    <option value="downtime">Downtime Analysis</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label for="dateFrom" class="form-label">From Date</label>
+                                                <input type="date" class="form-control" id="dateFrom">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label for="dateTo" class="form-label">To Date</label>
+                                                <input type="date" class="form-control" id="dateTo">
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-md-4">
+                                                <label for="equipmentFilter" class="form-label">Equipment</label>
+                                                <select class="form-select" id="equipmentFilter">
+                                                    <option value="all">All Equipment</option>
+                                                    <!-- Equipment options will be loaded here -->
+                                                </select>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label for="statusFilter" class="form-label">Status</label>
+                                                <select class="form-select" id="statusFilter">
+                                                    <option value="all">All Statuses</option>
+                                                    <option value="completed">Completed</option>
+                                                    <option value="pending">Pending</option>
+                                                    <option value="overdue">Overdue</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label for="priorityFilter" class="form-label">Priority</label>
+                                                <select class="form-select" id="priorityFilter">
+                                                    <option value="all">All Priorities</option>
+                                                    <option value="high">High</option>
+                                                    <option value="medium">Medium</option>
+                                                    <option value="low">Low</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-file-pdf me-2"></i>Generate Report
+                                        </button>
+                                        <button type="button" class="btn btn-success ms-2" id="exportExcelBtn">
+                                            <i class="fas fa-file-excel me-2"></i>Export to Excel
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+<!-- Training Section -->
+<section id="training" class="content-section d-none">
+  <div class="row mb-4">
+    <div class="col-12">
+      <h2><i class="fas fa-graduation-cap me-2"></i>Training</h2>
+      <hr>
+      <p>Training content will be displayed here. You can add training schedules, materials, and progress tracking.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Alerts Section -->
+<section id="alerts" class="content-section d-none">
+  <div class="row mb-4">
+    <div class="col-12">
+      <h2><i class="fas fa-bell me-2"></i>System Alerts</h2>
+      <hr>
+      <div class="alert alert-info" role="alert">
+        No critical alerts at this time.
+      </div>
+      <div id="alertList">
+        <!-- Alerts will be dynamically inserted here -->
+      </div>
+    </div>
+  </div>
+</section>
+
+    <!-- Add Equipment Modal -->
+    <div class="modal fade" id="addEquipmentModal" tabindex="-1" aria-labelledby="addEquipmentModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="addEquipmentModalLabel"><i class="fas fa-plus me-2"></i>Add New Equipment</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="equipmentForm">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="equipmentName" class="form-label">Equipment Name*</label>
+                                <input type="text" class="form-control" id="equipmentName" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="equipmentModel" class="form-label">Model*</label>
+                                <input type="text" class="form-control" id="equipmentModel" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="serialNumber" class="form-label">Serial Number*</label>
+                                <input type="text" class="form-control" id="serialNumber" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="manufacturer" class="form-label">Manufacturer*</label>
+                                <input type="text" class="form-control" id="manufacturer" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="purchaseDate" class="form-label">Purchase Date</label>
+                                <input type="date" class="form-control" id="purchaseDate">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="installationDate" class="form-label">Installation Date</label>
+                                <input type="date" class="form-control" id="installationDate">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="location" class="form-label">Location*</label>
+                                <select class="form-select" id="location" required>
+                                    <option value="">Select Location</option>
+                                    <option value="ICU">ICU</option>
+                                    <option value="OT">Operation Theater</option>
+                                    <option value="Radiology">Radiology</option>
+                                    <option value="Lab">Laboratory</option>
+                                    <option value="Ward">Ward</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="status" class="form-label">Status*</label>
+                                <select class="form-select" id="status" required>
+                                    <option value="active">Active</option>
+                                    <option value="inactive">Inactive</option>
+                                    <option value="maintenance">Under Maintenance</option>
+                                    <option value="retired">Retired</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <label for="notes" class="form-label">Notes</label>
+                                <textarea class="form-control" id="notes" rows="3"></textarea>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="warrantyStart" class="form-label">Warranty Start Date</label>
+                                <input type="date" class="form-control" id="warrantyStart">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="warrantyEnd" class="form-label">Warranty End Date</label>
+                                <input type="date" class="form-control" id="warrantyEnd">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="contractStart" class="form-label">Contract Start Date</label>
+                                <input type="date" class="form-control" id="contractStart">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="contractEnd" class="form-label">Contract End Date</label>
+                                <input type="date" class="form-control" id="contractEnd">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="criticalEquipment">
+                                    <label class="form-check-label" for="criticalEquipment">
+                                        Critical Equipment (Requires standby)
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveEquipmentBtn">Save Equipment</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Maintenance Modal -->
+    <div class="modal fade" id="addMaintenanceModal" tabindex="-1" aria-labelledby="addMaintenanceModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="addMaintenanceModalLabel"><i class="fas fa-plus me-2"></i>Schedule Maintenance</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="maintenanceForm">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="maintenanceEquipment" class="form-label">Equipment*</label>
+                                <select class="form-select" id="maintenanceEquipment" required>
+                                    <option value="">Select Equipment</option>
+                                    <!-- Equipment options will be loaded here -->
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="maintenanceType" class="form-label">Maintenance Type*</label>
+                                <select class="form-select" id="maintenanceType" required>
+                                    <option value="preventive">Preventive Maintenance</option>
+                                    <option value="corrective">Corrective Maintenance</option>
+                                    <option value="calibration">Calibration</option>
+                                    <option value="inspection">Inspection</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="scheduledDate" class="form-label">Scheduled Date*</label>
+                                <input type="date" class="form-control" id="scheduledDate" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="priority" class="form-label">Priority*</label>
+                                <select class="form-select" id="priority" required>
+                                    <option value="high">High</option>
+                                    <option value="medium" selected>Medium</option>
+                                    <option value="low">Low</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="assignedTo" class="form-label">Assigned To*</label>
+                                <select class="form-select" id="assignedTo" required>
+                                    <option value="">Select Engineer</option>
+                                    <!-- Engineer options will be loaded here -->
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="estimatedDuration" class="form-label">Estimated Duration (hours)</label>
+                                <input type="number" class="form-control" id="estimatedDuration" min="1" value="1">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <label for="maintenanceNotes" class="form-label">Description/Notes*</label>
+                                <textarea class="form-control" id="maintenanceNotes" rows="3" required></textarea>
+                            </div>
+                        </div>
+                        <div class="row mb-3" id="partsSection">
+                            <div class="col-12">
+                                <label class="form-label">Required Parts</label>
+                                <div class="table-responsive">
+                                    <table class="table table-sm" id="partsTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Part No.</th>
+                                                <th>Description</th>
+                                                <th>Quantity</th>
+                                                <th>Available</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- Parts will be added here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-outline-primary mt-2" id="addPartBtn">
+                                    <i class="fas fa-plus me-1"></i>Add Part
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveMaintenanceBtn">Schedule Maintenance</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Inventory Modal -->
+    <div class="modal fade" id="addInventoryModal" tabindex="-1" aria-labelledby="addInventoryModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="addInventoryModalLabel"><i class="fas fa-plus me-2"></i>Add Inventory Item</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="inventoryForm">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="partNumber" class="form-label">Part Number*</label>
+                                <input type="text" class="form-control" id="partNumber" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="partName" class="form-label">Part Name*</label>
+                                <input type="text" class="form-control" id="partName" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="equipmentForPart" class="form-label">For Equipment*</label>
+                                <select class="form-select" id="equipmentForPart" required>
+                                    <option value="">Select Equipment</option>
+                                    <!-- Equipment options will be loaded here -->
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="partCategory" class="form-label">Category*</label>
+                                <select class="form-select" id="partCategory" required>
+                                    <option value="fast-moving">Fast Moving</option>
+                                    <option value="slow-moving">Slow Moving</option>
+                                    <option value="consumable">Consumable</option>
+                                    <option value="accessory">Accessory</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="quantity" class="form-label">Quantity*</label>
+                                <input type="number" class="form-control" id="quantity" min="0" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="minQuantity" class="form-label">Minimum Quantity*</label>
+                                <input type="number" class="form-control" id="minQuantity" min="1" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="unit" class="form-label">Unit</label>
+                                <input type="text" class="form-control" id="unit" value="Each">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="supplier" class="form-label">Supplier</label>
+                                <input type="text" class="form-control" id="supplier">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="supplierContact" class="form-label">Supplier Contact</label>
+                                <input type="text" class="form-control" id="supplierContact">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <label for="partNotes" class="form-label">Notes</label>
+                                <textarea class="form-control" id="partNotes" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveInventoryBtn">Save Inventory Item</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Maintenance Details Modal -->
+    <div class="modal fade" id="maintenanceDetailsModal" tabindex="-1" aria-labelledby="maintenanceDetailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="maintenanceDetailsModalLabel"><i class="fas fa-info-circle me-2"></i>Maintenance Details</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h6>Equipment:</h6>
+                            <p id="detailEquipment"></p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Type:</h6>
+                            <p id="detailType"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h6>Scheduled Date:</h6>
+                            <p id="detailScheduledDate"></p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Status:</h6>
+                            <p id="detailStatus"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h6>Assigned To:</h6>
+                            <p id="detailAssignedTo"></p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Priority:</h6>
+                            <p id="detailPriority"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <h6>Description:</h6>
+                            <p id="detailDescription"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <h6>Required Parts:</h6>
+                            <div class="table-responsive">
+                                <table class="table table-sm" id="detailPartsTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Part No.</th>
+                                            <th>Description</th>
+                                            <th>Quantity</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Parts details will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" id="maintenanceActionsSection">
+                        <div class="col-12">
+                            <hr>
+                            <h5 class="mb-3">Maintenance Actions</h5>
+                            <form id="maintenanceActionForm">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="actualStartDate" class="form-label">Actual Start Date/Time</label>
+                                        <input type="datetime-local" class="form-control" id="actualStartDate">
+                                    </div>
+                                                                      <div class="col-md-6">
+                                        <label for="actualDuration" class="form-label">Actual Duration (hours)</label>
+                                        <input type="number" class="form-control" id="actualDuration" min="0" step="0.5">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="technicianNotes" class="form-label">Technician Notes</label>
+                                        <textarea class="form-control" id="technicianNotes" rows="2"></textarea>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="maintenanceStatus" class="form-label">Update Status</label>
+                                        <select class="form-select" id="maintenanceStatus">
+                                            <option value="scheduled">Scheduled</option>
+                                            <option value="in-progress">In Progress</option>
+                                            <option value="completed">Completed</option>
+                                            <option value="cancelled">Cancelled</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="partsUsed" class="form-label">Parts Used</label>
+                                        <textarea class="form-control" id="partsUsed" rows="2" placeholder="List parts used during maintenance"></textarea>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-primary" id="updateMaintenanceBtn">Update Maintenance</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" id="deleteMaintenanceBtn">Delete Record</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Equipment Details Modal -->
+    <div class="modal fade" id="equipmentDetailsModal" tabindex="-1" aria-labelledby="equipmentDetailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="equipmentDetailsModalLabel"><i class="fas fa-info-circle me-2"></i>Equipment Details</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h6>Equipment Name:</h6>
+                            <p id="detailEquipName"></p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Model:</h6>
+                            <p id="detailEquipModel"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h6>Serial Number:</h6>
+                            <p id="detailEquipSerial"></p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Manufacturer:</h6>
+                            <p id="detailEquipManufacturer"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h6>Location:</h6>
+                            <p id="detailEquipLocation"></p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Status:</h6>
+                            <p id="detailEquipStatus"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h6>Purchase Date:</h6>
+                            <p id="detailEquipPurchaseDate"></p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Installation Date:</h6>
+                            <p id="detailEquipInstallDate"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h6>Warranty:</h6>
+                            <p id="detailEquipWarranty"></p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Service Contract:</h6>
+                            <p id="detailEquipContract"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <h6>Notes:</h6>
+                            <p id="detailEquipNotes"></p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <hr>
+                            <h5 class="mb-3">Maintenance History</h5>
+                            <div class="table-responsive">
+                                <table class="table table-sm" id="equipMaintenanceTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                            <th>Status</th>
+                                            <th>Technician</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Maintenance history will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="editEquipmentBtn">Edit Equipment</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Inventory Details Modal -->
+    <div class="modal fade" id="inventoryDetailsModal" tabindex="-1" aria-labelledby="inventoryDetailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="inventoryDetailsModalLabel"><i class="fas fa-info-circle me-2"></i>Inventory Details</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h6>Part Number:</h6>
+                            <p id="detailPartNumber"></p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Part Name:</h6>
+                            <p id="detailPartName"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h6>For Equipment:</h6>
+                            <p id="detailPartEquipment"></p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Category:</h6>
+                            <p id="detailPartCategory"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <h6>Quantity:</h6>
+                            <p id="detailPartQuantity"></p>
+                        </div>
+                        <div class="col-md-4">
+                            <h6>Minimum Level:</h6>
+                            <p id="detailPartMinQuantity"></p>
+                        </div>
+                        <div class="col-md-4">
+                            <h6>Unit:</h6>
+                            <p id="detailPartUnit"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h6>Supplier:</h6>
+                            <p id="detailPartSupplier"></p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Supplier Contact:</h6>
+                            <p id="detailPartSupplierContact"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <h6>Notes:</h6>
+                            <p id="detailPartNotes"></p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <hr>
+                            <h5 class="mb-3">Usage History</h5>
+                            <div class="table-responsive">
+                                <table class="table table-sm" id="partUsageTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Used For</th>
+                                            <th>Quantity</th>
+                                            <th>Used By</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Usage history will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="editInventoryBtn">Edit Item</button>
+                    <button type="button" class="btn btn-success" id="restockInventoryBtn">Restock</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-warning">
+                    <h5 class="modal-title" id="confirmationModalLabel">Confirm Action</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="confirmationMessage">Are you sure you want to perform this action?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmActionBtn">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Profile - MediTrack</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h2>User Profile</h2>
+  <div id="profileDetails">
+    <p><strong>Email:</strong> <span id="userEmail"></span></p>
+    <p><strong>Role:</strong> <span id="userRole"></span></p>
+    <p><strong>Joined:</strong> <span id="createdAt"></span></p>
+  </div>
+
+  <a href="dashboard.html">Back to Dashboard</a>
+
+  <!-- Firebase Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCQNxNukLfEwmWS32kyXWX7Q7fO9yJOD3Q",
+      authDomain: "meditrack-8a1d7.firebaseapp.com",
+      projectId: "meditrack-8a1d7"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        const doc = await db.collection('users').doc(user.uid).get();
+        const data = doc.data();
+        document.getElementById('userEmail').textContent = data.email;
+        document.getElementById('userRole').textContent = data.role;
+        document.getElementById('createdAt').textContent = new Date(data.createdAt).toLocaleString();
+      } else {
+        window.location.href = "login.html";
+      }
+    });
+  </script>
+</body>
+</html>
+

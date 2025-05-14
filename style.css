@@ -1,0 +1,94 @@
+/* General Styles */
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f4f4f9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+.container {
+  background-color: #1a1a1a;
+  color: #fff;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+h2 {
+  color: #00b33c; /* Green color */
+  margin-bottom: 20px;
+}
+
+input[type="email"],
+input[type="password"],
+button {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+input[type="email"],
+input[type="password"] {
+  background-color: #333;
+  color: #fff;
+}
+
+input[type="email"]:focus,
+input[type="password"]:focus {
+  border-color: #00b33c; /* Green focus */
+  outline: none;
+}
+
+button {
+  background-color: #00b33c;
+  color: #fff;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #009933;
+}
+
+p {
+  color: #fff;
+  margin-top: 20px;
+}
+
+a {
+  color: #00b33c;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 600px) {
+  .container {
+    width: 90%;
+    padding: 20px;
+  }
+
+  h2 {
+    font-size: 24px;
+  }
+
+  input[type="email"],
+  input[type="password"],
+  button {
+    padding: 10px;
+  }
+}

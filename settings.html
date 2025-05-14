@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Settings - MediTrack</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h2>Account Settings</h2>
+  <form id="settingsForm">
+    <label for="newRole">Change Role (e.g., technician, admin):</label><br />
+    <input type="text" id="newRole" placeholder="Enter new role" required />
+    <button type="submit">Update Role</button>
+  </form>
+
+  <p id="statusMessage"></p>
+  <a href="dashboard.html">Back to Dashboard</a>
+
+  <!-- Firebase Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCQNxNukLfEwmWS32kyXWX7Q7fO9yJOD3Q",
+      authDomain: "meditrack-8a1d7.firebaseapp.com",
+      projectId: "meditrack-8a1d7"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    auth.onAuthStateChanged((user) => {
+      if (!user) {
+        window.location.href = "login.html";
+      }
+
+      document.getElementById('settingsForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const newRole = document.getElementById('newRole').value.trim();
+        if (!newRole) return;
+
+        try {
+          await db.collection('users').doc(user.uid).update({ role: newRole });
+          document.getElementById('statusMessage').textContent = "Role updated successfully!";
+        } catch (error) {
+          document.getElementById('statusMessage').textContent = "Error: " + error.message;
+        }
+      });
+    });
+  </script>
+</body>
+</html>
+
