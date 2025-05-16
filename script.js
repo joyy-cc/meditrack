@@ -471,3 +471,26 @@ function showToast(message, type = 'success') {
   toastEl.addEventListener('hidden.bs.toast', () => toastEl.remove());
 }
 
+// Check authentication state and display user info
+auth.onAuthStateChanged(user => {
+  if (!user) {
+    window.location.href = "login.html";
+  } else {
+    // Update profile modal fields
+    document.getElementById("userName").textContent = user.displayName || "N/A";
+    document.getElementById("userEmail").textContent = user.email || "N/A";
+    document.getElementById("userPhone").textContent = user.phoneNumber || "Not Provided";
+    document.getElementById("userRole").textContent = "Biomedical Engineer"; // You can change this if dynamic
+    document.getElementById("userDepartment").textContent = "Biomedical Equipment Services";
+    if (user.metadata?.lastSignInTime) {
+      document.getElementById("userLastLogin").textContent = new Date(user.metadata.lastSignInTime).toLocaleString();
+    }
+
+    // Load data after login
+    loadDashboardData();
+    loadEquipment();
+    loadMaintenance();
+    loadInventory();
+  }
+});
+
