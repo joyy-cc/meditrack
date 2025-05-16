@@ -548,8 +548,240 @@ auth.onAuthStateChanged(user => {
       reportResults.innerHTML = '<p class="text-danger">Failed to generate report.</p>';
     }
   });
+function renderEquipmentStatusChart(equipmentData) {
+  const ctx = document.getElementById('equipmentStatusChart').getContext('2d');
 
+  // Count statuses
+  const statusCounts = { active: 0, maintenance: 0, inactive: 0, critical: 0 };
+  equipmentData.forEach(eq => {
+    const status = eq.status.toLowerCase();
+    if (statusCounts[status] !== undefined) {
+      statusCounts[status]++;
+    }
+    if (eq.isCritical) statusCounts.critical++;
+  });
 
+  new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: ['Active', 'Under Maintenance', 'Inactive', 'Critical'],
+      datasets: [{
+        data: [
+          statusCounts.active,
+          statusCounts.maintenance,
+          statusCounts.inactive,
+          statusCounts.critical
+        ],
+        backgroundColor: ['#28a745', '#ffc107', '#6c757d', '#dc3545']
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { position: 'bottom' } }
+    }
+  });
+}
 
+function renderMaintenanceTrendsChart(maintenanceData) {
+  const ctx = document.getElementById('maintenanceTrendsChart').getContext('2d');
+
+  // Aggregate monthly counts by status (scheduled, completed, overdue)
+  const monthLabels = [];
+  const scheduledCounts = [];
+  const completedCounts = [];
+  const overdueCounts = [];
+
+  const countsByMonth = {};
+
+  maintenanceData.forEach(item => {
+    const date = new Date(item.scheduledDate);
+    const monthKey = `${date.getFullYear()}-${date.getMonth() + 1}`;
+
+    if (!countsByMonth[monthKey]) {
+      countsByMonth[monthKey] = { scheduled: 0, completed: 0, overdue: 0 };
+    }
+
+    countsByMonth[monthKey].scheduled++;
+
+    if (item.status.toLowerCase() === 'completed') {
+      countsByMonth[monthKey].completed++;
+    } else if (new Date(item.scheduledDate) < new Date() && item.status.toLowerCase() !== 'completed') {
+      countsByMonth[monthKey].overdue++;
+    }
+  });
+
+  // Sort months ascending
+  const sortedMonths = Object.keys(countsByMonth).sort();
+
+  sortedMonths.forEach(monthKey => {
+    const [year, month] = monthKey.split('-');
+    monthLabels.push(`${month}/${year}`);
+    scheduledCounts.push(countsByMonth[monthKey].scheduled);
+    completedCounts.push(countsByMonth[monthKey].completed);
+    overdueCounts.push(countsByMonth[monthKey].overdue);
+  });
+
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: monthLabels,
+      datasets: [
+        {
+          label: 'Scheduled',
+          data: scheduledCounts,
+          borderColor: '#007bff',
+          fill: false,
+          tension: 0.3
+        },
+        {
+          label: 'Completed',
+          data: completedCounts,
+          borderColor: '#28a745',
+          fill: false,
+          tension: 0.3
+        },
+        {
+          label: 'Overdue',
+          data: overdueCounts,
+          borderColor: '#dc3545',
+          fill: false,
+          tension: 0.3
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { position: 'bottom' } },
+      scales: {
+        y: { beginAtZero: true }
+      }
+    }
+  });
+}
+function loadDashboardData() {
+  // Load equipment data
+  db.collection('equipment').get().then(snapshot => {
+    const equipmentArray = snapshot.docs.map(doc => doc.data());
+
+    // Render Equipment Status chart
+    renderEquipmentStatusChart(equipmentArray);
+
+    // Update dashboard counts for equipment
+    document.getElementById('totalEquipment').textContent = snapshot.size;
+    const activeCount = equipmentArray.filter(eq => eq.status?.toLowerCase() === 'active').length;
+    document.getElementById('activeEquipment').textContent = activeCount;
+
+    // If you have other equipment-related counts, add here
+
+  }).catch(error => {
+    console.error("Error loading equipment data:", error);
+  });
+
+  // Load maintenance data
+  db.collection('maintenance').get().then(snapshot => {
+    const maintenanceArray = snapshot.docs.map(doc => doc.data());
+
+    // Render Maintenance Trends chart
+    renderMaintenanceTrendsChart(maintenanceArray);
+
+    // Update dashboard counts for maintenance
+    const scheduledMaintenance = maintenanceArray.filter(m => m.status === 'scheduled').length;
+    document.getElementById('pendingMaintenance').textContent = scheduledMaintenance;
+
+    const highPriorityAlerts = maintenanceArray.filter(m => m.priority?.toLowerCase() === 'high').length;
+    document.getElementById('criticalAlerts').textContent = highPriorityAlerts;
+
+    // If you have other maintenance-related counts, add here
+
+  }).catch(error => {
+    console.error("Error loading maintenance data:", error);
+  });
+
+  // Load inventory data (if you have counts to update)
+  db.collection('inventory').get().then(snapshot => {
+    document.getElementById('totalInventoryItems').textContent = snapshot.size;
+    // Add more inventory-related UI updates here if needed
+  }).catch(error => {
+    console.error("Error loading inventory data:", error);
+  });
+
+  // Any other dashboard data loading can be added below
+}
+function loadDashboardData() {
+  // EQUIPMENT
+  db.collection('equipment').get().then(snapshot => {
+    const equipmentArray = snapshot.docs.map(doc => doc.data());
+
+    renderEquipmentStatusChart(equipmentArray);
+
+    document.getElementById('totalEquipment').textContent = snapshot.size;
+    const activeCount = equipmentArray.filter(eq => eq.status?.toLowerCase() === 'active').length;
+    document.getElementById('activeEquipment').textContent = activeCount;
+  });
+
+  // MAINTENANCE
+  db.collection('maintenance').get().then(snapshot => {
+    const maintenanceArray = snapshot.docs.map(doc => doc.data());
+
+    renderMaintenanceTrendsChart(maintenanceArray);
+
+    const scheduled = maintenanceArray.filter(m => m.status === 'scheduled');
+    const highPriority = maintenanceArray.filter(m => m.priority?.toLowerCase() === 'high');
+
+    document.getElementById('pendingMaintenance').textContent = scheduled.length;
+    document.getElementById('criticalAlerts').textContent = highPriority.length;
+
+    // ✅ Recent Activities (last 5 by createdAt)
+    const recent = maintenanceArray
+      .filter(m => m.createdAt)
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      .slice(0, 5);
+
+    const recentContainer = document.getElementById('recentActivities');
+    if (recentContainer) {
+      recentContainer.innerHTML = '';
+      recent.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'activity-item mb-3';
+        div.innerHTML = `
+          <div class="d-flex justify-content-between">
+            <strong>${item.type} Maintenance</strong>
+            <small class="text-muted">${new Date(item.createdAt).toLocaleString()}</small>
+          </div>
+          <div>${item.equipmentName}</div>
+          <div class="text-muted">Scheduled: ${item.scheduledDate}</div>
+        `;
+        recentContainer.appendChild(div);
+      });
+    }
+
+    // ✅ Upcoming Maintenance
+    const upcoming = maintenanceArray
+      .filter(m => m.status === 'scheduled' && new Date(m.scheduledDate) > new Date())
+      .sort((a, b) => new Date(a.scheduledDate) - new Date(b.scheduledDate));
+
+    const upcomingContainer = document.getElementById('upcomingMaintenance');
+    if (upcomingContainer) {
+      upcomingContainer.innerHTML = '';
+      upcoming.slice(0, 5).forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'upcoming-item mb-2';
+        div.innerHTML = `
+          <div class="fw-bold">${item.equipmentName}</div>
+          <div class="text-muted">${item.scheduledDate}</div>
+        `;
+        upcomingContainer.appendChild(div);
+      });
+    }
+
+  });
+
+  // INVENTORY
+  db.collection('inventory').get().then(snapshot => {
+    const total = snapshot.size;
+    const totalInventoryEl = document.getElementById('totalInventoryItems');
+    if (totalInventoryEl) totalInventoryEl.textContent = total;
+  });
+}
 
 
