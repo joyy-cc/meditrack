@@ -493,4 +493,63 @@ auth.onAuthStateChanged(user => {
     loadInventory();
   }
 });
+// Generate Report
+  document.getElementById('reportForm')?.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const reportType = document.getElementById('reportType').value;
+    const dateFrom = document.getElementById('dateFrom').value;
+    const dateTo = document.getElementById('dateTo').value;
+    const equipmentFilter = document.getElementById('equipmentFilter').value;
+    const statusFilter = document.getElementById('statusFilter').value;
+    const priorityFilter = document.getElementById('priorityFilter').value;
+
+    const reportResults = document.getElementById('reportResults');
+    reportResults.innerHTML = '<p>Loading...</p>';
+
+    try {
+      let query;
+      if (reportType === 'maintenance') {
+        query = db.collection('maintenance');
+        if (statusFilter !== 'all') query = query.where('status', '==', statusFilter);
+        if (priorityFilter !== 'all') query = query.where('priority', '==', priorityFilter);
+        const snapshot = await query.get();
+        let html = '<h5>Maintenance Report</h5><table class="table"><thead><tr><th>Equipment</th><th>Type</th><th>Status</th><th>Date</th></tr></thead><tbody>';
+        snapshot.forEach(doc => {
+          const d = doc.data();
+          html += `<tr><td>${d.equipmentName}</td><td>${d.type}</td><td>${d.status}</td><td>${d.scheduledDate}</td></tr>`;
+        });
+        html += '</tbody></table>';
+        reportResults.innerHTML = html;
+      } else if (reportType === 'equipment') {
+        query = db.collection('equipment');
+        const snapshot = await query.get();
+        let html = '<h5>Equipment Report</h5><table class="table"><thead><tr><th>Name</th><th>Model</th><th>Status</th><th>Location</th></tr></thead><tbody>';
+        snapshot.forEach(doc => {
+          const d = doc.data();
+          html += `<tr><td>${d.name}</td><td>${d.model}</td><td>${d.status}</td><td>${d.location}</td></tr>`;
+        });
+        html += '</tbody></table>';
+        reportResults.innerHTML = html;
+      } else if (reportType === 'inventory') {
+        query = db.collection('inventory');
+        const snapshot = await query.get();
+        let html = '<h5>Inventory Report</h5><table class="table"><thead><tr><th>Part No</th><th>Name</th><th>Category</th><th>Quantity</th></tr></thead><tbody>';
+        snapshot.forEach(doc => {
+          const d = doc.data();
+          html += `<tr><td>${d.partNumber}</td><td>${d.partName}</td><td>${d.category}</td><td>${d.quantity}</td></tr>`;
+        });
+        html += '</tbody></table>';
+        reportResults.innerHTML = html;
+      } else if (reportType === 'downtime') {
+        reportResults.innerHTML = '<p>Downtime analysis report not yet implemented.</p>';
+      }
+    } catch (err) {
+      console.error("Report error:", err);
+      reportResults.innerHTML = '<p class="text-danger">Failed to generate report.</p>';
+    }
+  });
+
+
+
+
 
